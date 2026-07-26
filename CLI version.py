@@ -7,7 +7,7 @@ class bank:
      __data=[]
      __database="data.json"
      try:
-          if Path(__database).exists:
+          if Path(__database).exists():
                with open(__database) as f:
                     __data=json.load(f)
           else:
@@ -31,7 +31,7 @@ class bank:
           alpha=random.choices(string.ascii_letters, k=4)
           specialcharacters=random.choices("/@#$%^&*",k=4)
           numbers=random.choices("123456789",k=6)
-          concat=alpha=specialcharacters+numbers
+          concat=alpha+specialcharacters+numbers
           random.shuffle(concat)
           return "".join(concat)
 
@@ -61,7 +61,7 @@ class bank:
           try:
                accno=input("enter your account number: ")
                pin=int(input("enter your account pin: "))
-               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]]
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]==pin]
                if bool(userdata) == False:
                     print("data not found for required account number")
                else:
@@ -79,11 +79,11 @@ class bank:
           try:
                accno=input("enter your account number: ")
                pin=int(input("enter your account pin: "))
-               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]]
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]==pin]
                if bool(userdata) == False:
                     print("data not found for required account number")
                else:
-                    print(f"you current account balance is: {userdata[0]["balance"]}")
+                    print(f"you current account balance is: {userdata[0]['balance']}")
                     amount=int(input("enter amount to withdraw: "))
                     if amount>userdata[0]["balance"] or amount<0:
                          print("withdraw amount should be valid")
@@ -98,7 +98,7 @@ class bank:
           try:
                accno=input("enter your account number: ")
                pin=int(input("enter your account pin: "))
-               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]]
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]==pin]
                if bool(userdata) == False:
                     print("data not found for required account number")
                else:
@@ -106,12 +106,54 @@ class bank:
                     for i in user: print(f"{i} : {user[i]}")
           except Exception as e:
                print(f"{e} occured!")
+
+     def updatedetails(self):
+          try:
+               accno=input("enter your account number: ")
+               pin=int(input("enter your account pin: "))
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]==pin]
+               if bool(userdata) == False:
+                    print("data not found for required account number")
+               else:
+                    user=userdata[0]
+                    for i in user: print(f"{i} : {user[i]}")
+                    print("\n note that you can only change name,phone number and pin.\n" \
+                    "fill out following fields with new data or leave it empty if no change.\n")
+                    newdata={
+                         "name":input("enter your name: "),
+                         "phone":input("enter your phone number: "),
+                         "pin" :input("create a 4 digit pin: "),
+                    }
+                    if newdata["name"]!="":
+                         user["name"]=newdata["name"]
+                    if newdata["phone"]!="" and newdata["phone"].isdigit():
+                         user["phone"]=newdata["phone"]
+                    if newdata["pin"]!="" and newdata["pin"].isdigit():
+                         user["pin"]=newdata["pin"]
+
+                    bank.__update()
+                    print("information updated!")
+
+          except Exception as e:
+               print(f"{e} occured!")
           
+     def deleteaccount(self):
+          try:
+               accno=input("enter your account number: ")
+               pin=int(input("enter your account pin: "))
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]==pin]
+               if bool(userdata) == False:
+                    print("data not found for required account number")
+               else:
+                    user=userdata[0]
+                    bank.__data.remove(user)
+                    bank.__update()
+                    print("account removed successfully!")
+          except Exception as e:
+               print(f"{e} occured!")
 
+#MAIN FUNCTION
           
-
-
-
 user=bank()
 print("\nWELCOME TO BANK MANAGEMENT SYSTEM!\n")
 print("press 1 to create account")
@@ -120,16 +162,19 @@ print("press 3 to deposit money")
 print("press 4 to check details")
 print("press 5 to update details")
 print("press 6 to delete account\n")
-choice=int(input("enter you choice: "))
-if choice==1:
-     user.createaccount()
-if choice==2:
-     user.withdrawmoney()
-if choice==3:
-     user.depositmoney()
-if choice==4:
-     user.showdetails()
-if choice==5:
-     pass
-if choice==6:
-     pass
+try:
+     choice=int(input("enter your choice: "))
+     if choice==1:
+          user.createaccount()
+     if choice==2:
+          user.withdrawmoney()
+     if choice==3:
+          user.depositmoney()
+     if choice==4:
+          user.showdetails()
+     if choice==5:
+          user.updatedetails()
+     if choice==6:
+          user.deleteaccount()
+except Exception as e:
+     print(f"{e} occured")
