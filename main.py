@@ -61,15 +61,17 @@ class bank:
           try:
                accno=input("enter your account number: ")
                pin=int(input("enter your account pin: "))
-               for i in bank.__data:
-                    if i["acc.no"]==accno and i["pin"]==pin:
-                         amount=int(input("enter amount to deposit: "))
-                         i["balance"]+=amount
-                         print("amount deposited successfully!")
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]]
+               if bool(userdata) == False:
+                    print("data not found for required account number")
+               else:
+                    amount=int(input("enter amount to deposit: "))
+                    if amount>100000 or amount<0:
+                         print("deposit amount should be between 0-1 lac")
                     else:
-                         continue
-                    break
-               bank.__update()
+                         userdata[0]["balance"]+=amount
+                         bank.__update()
+                         print("Amount deposited successfully!")
           except Exception as e:
                print(f"{e} occured!")
 
@@ -77,17 +79,31 @@ class bank:
           try:
                accno=input("enter your account number: ")
                pin=int(input("enter your account pin: "))
-               for i in bank.__data:
-                    if i["acc.no"]==accno and i["pin"]==pin:
-                         print(f"your currect account balance is: {i["balance"]} -/PKR")
-                         amount=int(input("enter amount to withdraw: "))
-                         i["balance"]-=amount
-                         print("\namount withdrawn successfully!\n")
-                         print(f"your account balance remaining is: {i["balance"]} -/PKR\n")
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]]
+               if bool(userdata) == False:
+                    print("data not found for required account number")
+               else:
+                    print(f"you current account balance is: {userdata[0]["balance"]}")
+                    amount=int(input("enter amount to withdraw: "))
+                    if amount>userdata[0]["balance"] or amount<0:
+                         print("withdraw amount should be valid")
                     else:
-                         continue
-                    break
-               bank.__update()
+                         userdata[0]["balance"]-=amount
+                         bank.__update()
+                         print("Amount withdrawn successfully!")
+          except Exception as e:
+               print(f"{e} occured!")
+
+     def showdetails(self):
+          try:
+               accno=input("enter your account number: ")
+               pin=int(input("enter your account pin: "))
+               userdata=[i for i in bank.__data if i["acc.no"]==accno and i["pin"]]
+               if bool(userdata) == False:
+                    print("data not found for required account number")
+               else:
+                    user=userdata[0]
+                    for i in user: print(f"{i} : {user[i]}")
           except Exception as e:
                print(f"{e} occured!")
           
@@ -112,7 +128,7 @@ if choice==2:
 if choice==3:
      user.depositmoney()
 if choice==4:
-     pass
+     user.showdetails()
 if choice==5:
      pass
 if choice==6:
